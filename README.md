@@ -8,7 +8,7 @@ docker run -d --name wireguard-socks-proxy \
     --cap-add=NET_ADMIN \
     -e "LOCAL_NETWORK=192.168.1.0/24" \
     -e "COUNTRY=Canada" \
-    -e "PRIVATEKEY=sGDvYx+OX7fuALQVUt0TuhnJzVSscNfYsVouQR/HU1U=" \
+    -e "PRIVATEKEY=\"sGDvYx+OX7fuALQVUt0TuhnJzVSscNfYsVouQR/HU1U=\"" \
     -v wgclient:/etc/wireguard/ \
     --sysctl net.ipv4.conf.all.src_valid_mark=1 \
     -p 1080:1080 \
@@ -18,7 +18,7 @@ docker run -d --name wireguard-socks-proxy \
     --cap-add=NET_ADMIN \
     -e "LOCAL_NETWORK=192.168.1.0/24" \
     -e "COUNTRYCODE=CA" \
-    -e "PRIVATEKEY=sGDvYx+OX7fuALQVUt0TuhnJzVSscNfYsVouQR/HU1U=" \
+    -e "PRIVATEKEY=\"sGDvYx+OX7fuALQVUt0TuhnJzVSscNfYsVouQR/HU1U=\"" \
     -v wgclient:/etc/wireguard/ \
     --sysctl net.ipv4.conf.all.src_valid_mark=1 \
     -p 1080:1080 \
