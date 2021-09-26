@@ -18,9 +18,9 @@ else
   COUNTRYID=$(curl -s "https://nordvpn.com/wp-admin/admin-ajax.php?action=servers_countries" | jq --arg COUNTRY "$COUNTRY" '.[]  | select(.name == $COUNTRY) | .id')
 fi
 
-echo "country: $COUNTRY"
-echo "countrycode: $COUNTRYCODE"
-echo "privkey: ${PRIVATEKEY}"
+#echo "country: $COUNTRY"
+#echo "countrycode: $COUNTRYCODE"
+#echo "privkey: ${PRIVATEKEY}"
 
 COUNTRYID=$(curl -s "https://nordvpn.com/wp-admin/admin-ajax.php?action=servers_countries" | jq --arg COUNTRYCODE "$COUNTRYCODE" '.[]  | select(.code == $COUNTRYCODE) | .id')
 curl -s "https://api.nordvpn.com/v1/servers/recommendations?filters\[country_id\]=$COUNTRYID&filters\[servers_technologies\]\[identifier\]=wireguard_udp&filters\[servers_group\]\[identifier\]=legacy_group_category&limit=1" | jq --raw-output '.[] | "#!/bin/bash\n\nVPNNAME=\"\(.name)\"\nVPNHOST=\(.hostname)\nVPNIP=\(.station)\nVPNREGION=\(.locations|.[]|.country|.city.name)\nVPNCOUNTRY=\(.locations|.[]|.country|.name)\nVPNPUBLICKEY=\(.technologies|.[].metadata|.[].value)\nVPNLOAD=\(.load)\n"' > /etc/wireguard/vpnserver
