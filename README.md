@@ -21,7 +21,7 @@ This image requires wireguard kernel module has been installed and loaded on the
 iptables rules are added automatically during startup to prevent leaks.
 ## Build
 ```
-git clone https://github.com/trananhtuan/docker-wireguard-socks-proxy
+git clone https://github.com/justbeta/docker-wireguard-socks-proxy
 cd docker-wireguard-socks-proxy
-docker build -t trananhtuan/wireguard-socks-proxy:latest .
+docker build -t justbeta/wireguard-socks-proxy:latest .
 ```
