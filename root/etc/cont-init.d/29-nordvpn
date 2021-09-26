@@ -1,0 +1,47 @@
+#!/usr/bin/with-contenv sh
+COUNTRY=${COUNTRY}
+COUNTRYCODE=${COUNTRYCODE}
+PRIVATEKEY=${PRIVATEKEY}
+
+if [ -z "$PRIVATEKEY" ]
+then
+  rm /etc/wireguard/wg0.conf
+  echo "PRIVATEKEY is empty!"
+fi
+if [ -z "$COUNTRY" ]
+then
+  if [ -z "$COUNTRYCODE" ]
+  then
+    COUNTRYID=$(curl -s "https://nordvpn.com/wp-admin/admin-ajax.php?action=servers_countries" | jq --arg COUNTRYCODE "$COUNTRYCODE" '.[]  | select(.code == $COUNTRYCODE) | .id')
+  fi
+else
+  COUNTRYID=$(curl -s "https://nordvpn.com/wp-admin/admin-ajax.php?action=servers_countries" | jq --arg COUNTRY "$COUNTRY" '.[]  | select(.name == $COUNTRY) | .id')
+fi
+
+echo "country: $COUNTRY"
+echo "countrycode: $COUNTRYCODE"
+echo "privkey: ${PRIVATEKEY}"
+
+COUNTRYID=$(curl -s "https://nordvpn.com/wp-admin/admin-ajax.php?action=servers_countries" | jq --arg COUNTRYCODE "$COUNTRYCODE" '.[]  | select(.code == $COUNTRYCODE) | .id')
+curl -s "https://api.nordvpn.com/v1/servers/recommendations?filters\[country_id\]=$COUNTRYID&filters\[servers_technologies\]\[identifier\]=wireguard_udp&filters\[servers_group\]\[identifier\]=legacy_group_category&limit=1" | jq --raw-output '.[] | "#!/bin/bash\n\nVPNNAME=\"\(.name)\"\nVPNHOST=\(.hostname)\nVPNIP=\(.station)\nVPNREGION=\(.locations|.[]|.country|.city.name)\nVPNCOUNTRY=\(.locations|.[]|.country|.name)\nVPNPUBLICKEY=\(.technologies|.[].metadata|.[].value)\nVPNLOAD=\(.load)\n"' > /etc/wireguard/vpnserver
+
+echo "echo \"name:	\$VPNNAME\"" >> /etc/wireguard/vpnserver
+echo "echo \"ip:	\$VPNIP\"" >> /etc/wireguard/vpnserver
+echo "echo \"region:	\$VPNREGION\"" >> /etc/wireguard/vpnserver
+echo "echo \"country:	\$VPNCOUNTRY\"" >> /etc/wireguard/vpnserver
+echo "echo \"pubkey:	\$VPNPUBLICKEY\"" >> /etc/wireguard/vpnserver
+echo "echo \"load:	\$VPNLOAD\"" >> /etc/wireguard/vpnserver
+echo "" >> /etc/wireguard/vpnserver
+
+echo "echo \"[Interface]\" > /etc/wireguard/wg0.conf" >> /etc/wireguard/vpnserver
+echo "echo \"PrivateKey = $PRIVATEKEY\" >> /etc/wireguard/wg0.conf" >> /etc/wireguard/vpnserver
+echo "echo \"Address = 10.5.0.2/32\" >> /etc/wireguard/wg0.conf" >> /etc/wireguard/vpnserver
+echo "echo \"DNS = 103.86.96.100, 103.86.99.100\" >> /etc/wireguard/wg0.conf" >> /etc/wireguard/vpnserver
+echo "echo \"[Peer]\" >> /etc/wireguard/wg0.conf" >> /etc/wireguard/vpnserver
+echo "echo \"PublicKey = \$VPNPUBLICKEY\" >> /etc/wireguard/wg0.conf" >> /etc/wireguard/vpnserver
+echo "echo \"AllowedIPs = 0.0.0.0/0\" >> /etc/wireguard/wg0.conf" >> /etc/wireguard/vpnserver
+echo "echo \"Endpoint = \$VPNIP:51820\" >> /etc/wireguard/wg0.conf" >> /etc/wireguard/vpnserver
+echo "echo \"PersistentKeepalive = 5\" >> /etc/wireguard/wg0.conf" >> /etc/wireguard/vpnserver
+
+bash /etc/wireguard/vpnserver
+
