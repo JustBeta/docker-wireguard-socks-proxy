@@ -14,7 +14,7 @@ docker run -d --name wireguard-socks-proxy \
     -p 1080:1080 \
     trananhtuan/wireguard-socks-proxy:latest
 ```
-`/path/to/config/wg0.conf` is a wireguard configuration file.
+`wgclient` for storage wireguard configuration file.
 
 This image requires wireguard kernel module has been installed and loaded on the host OS. In order to check that the WireGuard kernel module has loaded you can run `sudo modprobe wireguard`, if you get no output it’s all good.
 
