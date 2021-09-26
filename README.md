@@ -7,7 +7,9 @@ Turn a wireguard connection into a lightweight SOCKS proxy server (alpine/wiregu
 docker run -d --name wireguard-socks-proxy \
     --cap-add=NET_ADMIN \
     -e "LOCAL_NETWORK=192.168.1.0/24" \
-    -v /path/to/config/wg0.conf:/etc/wireguard/wg0.conf \
+    -e "COUNTRY=Canada"  or -e "COUNTRYCODE=CA" \
+    -e "PRIVATEKEY=sGDvYx+OX7fuALQVUt0TuhnJzVSscNfYsVouQR/HU1U=" \
+    -v wgclient:/etc/wireguard/ \
     --sysctl net.ipv4.conf.all.src_valid_mark=1 \
     -p 1080:1080 \
     trananhtuan/wireguard-socks-proxy:latest
