@@ -1,5 +1,5 @@
-#!/bin/sh
-. /app/date.sh --source-only
+#!/usr/bin/with-contenv sh
+#. /app/date.sh --source-only
 sleep 10
 
 # Return traffic that went through OpenVPN works.
