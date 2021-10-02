@@ -14,5 +14,6 @@ fi
 ip route add to 192.168.1.0/24 via $gw dev eth0
 
 # Start privoxy
-echo "$(adddate) INFO: Privoxy will be started"
+# echo "$(adddate) INFO: Privoxy will be started"
+echo Start privoxy
 privoxy --no-daemon
